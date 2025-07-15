@@ -770,7 +770,6 @@ require('lazy').setup({
             },
           },
         },
-        prismals = {},
         -- rust_analyzer = {},
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
         --
@@ -1010,7 +1009,6 @@ require('lazy').setup({
         opts = {},
       },
       'folke/lazydev.nvim',
-      'github/copilot.vim',
       'pmizio/typescript-tools.nvim',
     },
 
