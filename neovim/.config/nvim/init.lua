@@ -138,6 +138,8 @@ vim.o.updatetime = 250
 -- Decrease mapped sequence wait time
 vim.o.timeoutlen = 300
 
+vim.o.tabstop = 4
+
 -- Configure how new splits should be opened
 vim.o.splitright = true
 vim.o.splitbelow = true
@@ -353,6 +355,10 @@ require('lazy').setup({
         { '<leader>h', group = 'Git [H]unk', mode = { 'n', 'v' } },
       },
     },
+  },
+  {
+    'm4xshen/autoclose.nvim',
+    opts = {},
   },
 
   -- NOTE: Plugins can specify dependencies.
