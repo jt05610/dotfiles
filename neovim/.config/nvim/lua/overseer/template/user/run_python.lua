@@ -1,7 +1,7 @@
 return {
   name = 'run python',
   builder = function()
-    local file = vim.fn.expand '$:p'
+    local file = vim.fn.expand '%:p'
     local filename = vim.fn.expand '%:t'
     local cmd = { file }
     if vim.bo.filetype == 'python' then

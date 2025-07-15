@@ -935,8 +935,43 @@ require('lazy').setup({
   {
     'stevearc/overseer.nvim',
     config = function()
-      require('overseer').setup()
+      require('overseer').setup {
+        templates = { 'builtin', 'user.run_python' },
+      }
+      vim.api.nvim_create_user_command('WatchRun', function()
+        local overseer = require 'overseer'
+        overseer.run_template({ name = 'run python' }, function(task)
+          if not task then
+            vim.notify('WatchRun not supported for filetype ' .. vim.bo.filetype, vim.log.levels.ERROR)
+            return
+          end
+          task:add_component { 'restart_on_save', paths = { vim.fn.expand '%:p' } }
+
+          local existing_output_win = nil
+          local wins = vim.api.nvim_list_wins()
+          for _, win in ipairs(wins) do
+            local buf = vim.api.nvim_win_get_buf(win)
+            local buftype = vim.bo[buf].buftype
+            if buftype:match 'terminal' then
+              existing_output_win = win
+              break
+            end
+          end
+
+          local main_win = vim.api.nvim_get_current_win()
+
+          if existing_output_win then
+            vim.api.nvim_set_current_win(existing_output_win)
+            overseer.run_action(task, 'use_window')
+          else
+            overseer.run_action(task, 'open hsplit')
+            vim.cmd 'resize 15'
+          end
+          vim.api.nvim_set_current_win(main_win)
+        end)
+      end, {})
       vim.keymap.set('n', '<leader>r', '<cmd>OverseerRun<CR>', { desc = '[R]un Task' })
+      vim.keymap.set('n', '<leader>w', '<cmd>WatchRun<CR>', { desc = '[W]atch Task' })
     end,
   },
   { -- Autoformat
