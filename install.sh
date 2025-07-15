@@ -6,3 +6,4 @@ curl https://github.com/ryanoasis/nerd-fonts/releases/download/v3.4.0/JetBrainsM
 unzip JetBrainsMono
 mv *.ttf ~/Library/Fonts/
 rm JetBrainsMono.zip OFL.txt README.md
+ln -s "${SCRIPTPATH}/Profiles.json" "${HOME}/Library/Application Support/iTerm2/DynamicProfiles/Profiles.json"
