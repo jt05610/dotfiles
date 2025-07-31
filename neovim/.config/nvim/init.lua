@@ -564,7 +564,7 @@ require('lazy').setup({
         'pmizio/typescript-tools.nvim',
         dependencies = { 'nvim-lua/plenary.nvim', 'neovim/nvim-lspconfig' },
         opts = {
-          ft = { 'typescript', 'typescriptreact', 'javascript', 'javascriptreact' },
+          ft = { 'typescript', 'typescriptreact', 'javascript', 'javascriptreact', 'json', 'jsonc' },
           settings = {
             tsserver_file_preferences = {
               includeInlayParameterNameHints = 'all',
@@ -760,9 +760,26 @@ require('lazy').setup({
       --  - capabilities (table): Override fields in capabilities. Can be used to disable certain LSP features.
       --  - settings (table): Override the default settings passed when initializing the server.
       --        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
+      local base_on_attach = vim.lsp.config.eslint.on_attach
       local servers = {
         -- clangd = {},
         ruff = {},
+        basedpyright = {},
+        eslint = {
+          settings = {
+            on_attach = function(client, buffnr)
+              if not base_on_attach then
+                return
+              end
+
+              base_on_attach(client, buffnr)
+              vim.api.nvim_create_autocmd('BufWritePre', {
+                buffer = buffnr,
+                command = 'LspEslintFixAll',
+              })
+            end,
+          },
+        },
         -- rust_analyzer = {},
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
         --
@@ -994,9 +1011,11 @@ require('lazy').setup({
       formatters_by_ft = {
         lua = { 'stylua' },
         -- Conform can also run multiple formatters sequentially
-        python = { 'ruff', 'format' },
+        python = { 'ruff format', 'black', stop_after_first = true },
         --
         -- You can use 'stop_after_first' to run the first available formatter from the list
+        json = { 'prettierd', 'prettier', stop_after_first = true },
+        jsonc = { 'prettierd', 'prettier', stop_after_first = true },
         javascript = { 'prettierd', 'prettier', stop_after_first = true },
         typescript = { 'prettierd', 'prettier', stop_after_first = true },
         javascriptreact = { 'prettierd', 'prettier', stop_after_first = true },
